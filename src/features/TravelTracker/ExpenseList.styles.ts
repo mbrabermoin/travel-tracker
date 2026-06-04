@@ -331,6 +331,18 @@ export const StyledTotalCardValue = styled.div<{ $color?: string }>`
   }
 `;
 
+export const StyledTotalCardSubValue = styled.div`
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: ${muted};
+  opacity: 0.95;
+
+  @media (min-width: 640px) {
+    font-size: 13px;
+  }
+`;
+
 const totalValueShimmer = keyframes`
   0% {
     background-position: -180px 0;

@@ -32,6 +32,7 @@ import {
   StyledTotalCard,
   StyledTotalCardLabel,
   StyledTotalCardValue,
+  StyledTotalCardSubValue,
   StyledTotalValueSkeleton,
   StyledTableWrap,
   StyledExpenseTable,
@@ -438,6 +439,9 @@ const ExpenseList: React.FC = () => {
                   <StyledTotalCardValue $color={name.toLowerCase().startsWith("j") ? "#c4714a" : "#8a9e7e"}>
                     U$D {formatAmount(data.usdTotal)}
                   </StyledTotalCardValue>
+                  <StyledTotalCardSubValue>
+                    $ {formatAmount(data.usdTotal * dolarPesosExchange)}
+                  </StyledTotalCardSubValue>
                 </StyledTotalCard>
               ))
             )}
