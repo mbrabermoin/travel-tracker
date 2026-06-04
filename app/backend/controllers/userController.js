@@ -318,10 +318,10 @@ const getExpenses = async (req, res) => {
     let totalsParams = [];
     let perPersonParams = [];
 
-    const mainWhere = ["LOWER(TRIM(e.responsible)) IN ('mati', 'juli')"];
-    const countWhere = ["LOWER(TRIM(e.responsible)) IN ('mati', 'juli')"];
-    const totalsWhere = ["LOWER(TRIM(e.responsible)) IN ('mati', 'juli')"];
-    const perPersonWhere = ["LOWER(TRIM(e.responsible)) IN ('mati', 'juli')"];
+    const mainWhere = [];
+    const countWhere = [];
+    const totalsWhere = [];
+    const perPersonWhere = [];
 
     if (travelId) {
       mainWhere.push("e.travelId = $" + (params.length + 1));
@@ -375,8 +375,6 @@ const getExpenses = async (req, res) => {
     if (travelId) {
       totalCountWhere.push("e.travelId = $1");
       totalCountParams.push(travelId);
-    } else {
-      totalCountWhere.push("LOWER(TRIM(e.responsible)) IN ('mati', 'juli')");
     }
     if (totalCountWhere.length > 0) {
       totalCountQuery += " WHERE " + totalCountWhere.join(" AND ");
