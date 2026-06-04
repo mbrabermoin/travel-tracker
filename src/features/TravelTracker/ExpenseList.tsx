@@ -440,7 +440,7 @@ const ExpenseList: React.FC = () => {
                     U$D {formatAmount(data.usdTotal)}
                   </StyledTotalCardValue>
                   <StyledTotalCardSubValue>
-                    $ {formatAmount(data.usdTotal * dolarPesosExchange)}
+                    $ {formatAmount(data.pesosTotal)}
                   </StyledTotalCardSubValue>
                 </StyledTotalCard>
               ))

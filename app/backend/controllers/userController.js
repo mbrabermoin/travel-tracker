@@ -204,7 +204,44 @@ const getExpenses = async (req, res) => {
           0
         ),
         2
-      ) AS "usdTotal"
+      ) AS "usdTotal",
+      ROUND(
+        COALESCE(
+          SUM(
+            CASE
+              WHEN LOWER(TRIM(e.exchange)) IN ('peso', 'pesos', 'ars') THEN e.amount
+              WHEN LOWER(TRIM(e.exchange)) IN ('real', 'reales', 'brl') THEN
+                (e.amount / NULLIF(
+                  COALESCE(
+                    (to_jsonb(t) ->> 'dolarRealExchange')::numeric,
+                    (to_jsonb(t) ->> 'dolarrealexchange')::numeric,
+                    1
+                  ),
+                  0
+                )) * NULLIF(
+                  COALESCE(
+                    (to_jsonb(t) ->> 'dolarPesosExchange')::numeric,
+                    (to_jsonb(t) ->> 'dolarpesosexchange')::numeric,
+                    1
+                  ),
+                  0
+                )
+              WHEN LOWER(TRIM(e.exchange)) IN ('dolar', 'dólar', 'dolares', 'dólares', 'usd') THEN
+                e.amount * NULLIF(
+                  COALESCE(
+                    (to_jsonb(t) ->> 'dolarPesosExchange')::numeric,
+                    (to_jsonb(t) ->> 'dolarpesosexchange')::numeric,
+                    1
+                  ),
+                  0
+                )
+              ELSE 0
+            END
+          ),
+          0
+        ),
+        2
+      ) AS "pesosTotal"
     FROM expenses e
     LEFT JOIN trips t ON t.id::text = e.travelId::text`;
     let totalsQuery = `SELECT
@@ -403,6 +440,7 @@ const getExpenses = async (req, res) => {
           .filter((row) => row.responsible)
           .map((row) => [String(row.responsible), {
             usdTotal: Number.parseFloat(row.usdTotal) || 0,
+            pesosTotal: Number.parseFloat(row.pesosTotal) || 0,
             expenseCount: Number.parseInt(row.expenseCount) || 0
           }]),
       ),

@@ -56,7 +56,7 @@ interface ExpenseTotals {
   dollarPaid: number;
   pesosPaid: number;
   realesPaid: number;
-  perPersonUsd: Record<string, { usdTotal: number; expenseCount: number }>;
+  perPersonUsd: Record<string, { usdTotal: number; pesosTotal: number; expenseCount: number }>;
 }
 
 export const useTripsAndExpenses = () => {
@@ -153,7 +153,16 @@ export const useTripsAndExpenses = () => {
         dollarPaid: Number(data.data?.totals?.dollarPaid || 0),
         pesosPaid: Number(data.data?.totals?.pesosPaid || 0),
         realesPaid: Number(data.data?.totals?.realesPaid || 0),
-        perPersonUsd: data.data?.totals?.perPersonUsd || {},
+        perPersonUsd: Object.fromEntries(
+          Object.entries(data.data?.totals?.perPersonUsd || {}).map(([name, raw]) => {
+            const normalized = (raw || {}) as { usdTotal?: number | string; pesosTotal?: number | string; expenseCount?: number | string };
+            return [name, {
+              usdTotal: Number(normalized.usdTotal || 0),
+              pesosTotal: Number(normalized.pesosTotal || 0),
+              expenseCount: Number(normalized.expenseCount || 0),
+            }];
+          }),
+        ),
       });
 
       if (data.data.pagination) {
