@@ -423,6 +423,9 @@ const ExpenseList: React.FC = () => {
               <StyledTotalCardValue $color="#d4a853">
                 {loading ? <StyledTotalValueSkeleton $width="108px" /> : <>U$D {formatAmount(totals.dollarTotal)}</>}
               </StyledTotalCardValue>
+              <StyledTotalCardSubValue>
+                    $ {formatAmount(totals.pesosPaid)}
+              </StyledTotalCardSubValue>
             </StyledTotalCard>
 
             {loading ? (
