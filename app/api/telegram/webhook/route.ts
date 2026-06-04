@@ -468,6 +468,28 @@ function parseExpenseDateInput(value: string) {
   return null;
 }
 
+function formatDateForSheet(value: string | Date | null | undefined) {
+  if (!value) {
+    return "";
+  }
+
+  const raw = String(value).trim();
+  const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    return `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1]}`;
+  }
+
+  const parsed = value instanceof Date ? value : new Date(raw);
+  if (Number.isNaN(parsed.getTime())) {
+    return raw;
+  }
+
+  const day = String(parsed.getDate()).padStart(2, "0");
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const year = parsed.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
 function formatExpenseAmount(value: number | string | null | undefined) {
   const amount = Number(value);
   if (!Number.isFinite(amount)) {
@@ -581,7 +603,7 @@ async function saveExpenseAndSync(pool: Pool, input: SaveExpenseInput) {
 
   const targetSheetName = sheetTab || input.travelDescription || tripName;
   const sheetPayload = {
-    date: input.date,
+    date: formatDateForSheet(input.date),
     description: input.description.trim(),
     exchange: normalizedExchange,
     amount: input.amount,

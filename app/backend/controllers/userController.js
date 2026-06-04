@@ -746,6 +746,21 @@ const processPendingExpenseSync = async (limit = 20) => {
   };
 };
 
+const formatDateForSheet = (inputDate, fallbackDate = new Date()) => {
+  const rawDate = String(inputDate || "").trim();
+  const ymdMatch = rawDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (ymdMatch) {
+    return `${ymdMatch[3]}/${ymdMatch[2]}/${ymdMatch[1]}`;
+  }
+
+  const parsedDate = new Date(rawDate);
+  const baseDate = Number.isNaN(parsedDate.getTime()) ? fallbackDate : parsedDate;
+  const day = String(baseDate.getDate()).padStart(2, "0");
+  const month = String(baseDate.getMonth() + 1).padStart(2, "0");
+  const year = baseDate.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 const addExpenseToSheet = async (req, res) => {
   try {
     const payload = req.body ?? {};
@@ -795,7 +810,7 @@ const addExpenseToSheet = async (req, res) => {
 
     const expense = dbResult.rows[0];
     const sheetPayload = {
-      date,
+      date: formatDateForSheet(date, expenseDate),
       description: String(description).trim(),
       exchange: String(exchange).trim(),
       amount: amountNumber,
